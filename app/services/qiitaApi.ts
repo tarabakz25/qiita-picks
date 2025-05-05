@@ -47,6 +47,59 @@ export const fetchRecommendedArticles = async (
 };
 
 /**
+ * トレンド記事（最新の人気記事）を取得する
+ * @param page ページ番号（1からスタート）
+ * @param perPage 1ページあたりの記事数（最大100）
+ * @returns トレンド記事の配列
+ */
+export const fetchTrendingArticles = async (
+  page: number = 1,
+  perPage: number = 20
+): Promise<QiitaArticle[]> => {
+  try {
+    // 最近の記事を人気順で取得
+    const response = await axios.get(`${API_BASE_URL}/items`, {
+      params: {
+        page,
+        per_page: perPage,
+        query: 'created:>2023-01-01', // 2023年以降の記事
+        sort: 'popularity'  // 人気順でソート
+      }
+    });
+    return response.data as QiitaArticle[];
+  } catch (error) {
+    console.error('Qiita API error:', error);
+    return [];
+  }
+};
+
+/**
+ * タイムライン記事（最新記事）を取得する
+ * @param page ページ番号（1からスタート）
+ * @param perPage 1ページあたりの記事数（最大100）
+ * @returns 最新記事の配列
+ */
+export const fetchTimelineArticles = async (
+  page: number = 1,
+  perPage: number = 20
+): Promise<QiitaArticle[]> => {
+  try {
+    // 最新記事を取得
+    const response = await axios.get(`${API_BASE_URL}/items`, {
+      params: {
+        page,
+        per_page: perPage,
+        sort: 'created' // 作成日順でソート
+      }
+    });
+    return response.data as QiitaArticle[];
+  } catch (error) {
+    console.error('Qiita API error:', error);
+    return [];
+  }
+};
+
+/**
  * 特定のタグの記事を取得する
  * @param tag タグ名
  * @param page ページ番号
